@@ -131,6 +131,7 @@ fun SignUp(
 				Text(
 					stringResource(id = R.string.enter_display_name),
 					fontSize = Typography.bodyLarge.fontSize * tsf,
+					fontFamily = montserrat,
 				)
 			},
 			placeholder = {
@@ -225,6 +226,7 @@ fun SignUp(
 				Text(
 					stringResource(id = R.string.enter_email),
 					fontSize = Typography.bodyLarge.fontSize * tsf,
+					fontFamily = montserrat,
 				)
 			},
 			placeholder = {
@@ -304,6 +306,7 @@ fun SignUp(
 				Text(
 					stringResource(id = R.string.enter_password),
 					fontSize = Typography.bodyLarge.fontSize * tsf,
+					fontFamily = montserrat,
 				)
 			},
 			placeholder = {
