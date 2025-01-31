@@ -1,0 +1,21 @@
+<resources>
+	<string name="app_name" translatable="false">Commenter</string>
+	<string name="enter_email">Enter your email</string>
+	<string name="enter_password">Enter your password</string>
+	<string name="hide_password">Hide password</string>
+	<string name="show_password">Show password</string>
+	<string name="login">Login</string>
+	<string name="sign_up">Sign up</string>
+	<string name="enter_display_name">Enter your display name</string>
+	<string name="display_name_max_length">Display name cannot be longer than %1d characters</string>
+	<string name="email_formatted_incorrectly">Email should be formatted as abc@example.com</string>
+	<string name="password_length">Password must be at least 10 characters long</string>
+	<string name="sign_up_instead">Don\'t have an account? Sign up instead</string>
+	<string name="already_have_account">Already have an account? Login instead</string>
+	<string name="login_again">Please try logging in again</string>
+	<string name="sign_up_again">Please try signing up again</string>
+	<string name="user_not_found">The corresponding user does not exist</string>
+	<string name="email_in_use">This email is already in use</string>
+	<string name="incorrect_password">Password is incorrect</string>
+	<string name="account_disabled">This account is disabled, try using another one</string>
+</resources>

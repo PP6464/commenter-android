@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#FFF8CC1B</color>
+    <color name="primary_dark">#FFD6AA00</color>
+    <color name="secondary">#FF3B9E49</color>
+    <color name="secondary_dark">#FF2A8D30</color>
+    <color name="grey">#FFD0D0D0</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red">#FFFF5858</color>
+    <color name="tab_background">#FFDDAA00</color>
+    <color name="dark_surface">#FF101010</color>
+    <color name="dark_app_bar">#FF252525</color>
+    <color name="dark_status_bar">#FF191919</color>
+    <color name="crucial_label">#FFF44336</color>
+    <color name="crucial_background">#FFFFCDD2</color>
+    <color name="alerting_label">#FFFF9800</color>
+    <color name="alerting_background">#FFFFCC80</color>
+    <color name="link">#2299ff</color>
+</resources>
