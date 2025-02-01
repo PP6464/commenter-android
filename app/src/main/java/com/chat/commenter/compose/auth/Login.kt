@@ -52,18 +52,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.chat.commenter.LocalNavController
 import com.chat.commenter.Page
 import com.chat.commenter.R
 import com.chat.commenter.api.LoginBody
 import com.chat.commenter.api.NoPayloadResponseBody
-import com.chat.commenter.api.apiUrl
+import com.chat.commenter.api.UserResponseBody
 import com.chat.commenter.api.requestFromAPI
 import com.chat.commenter.state.AppViewModel
 import com.chat.commenter.ui.theme.Typography
 import com.chat.commenter.ui.theme.montserrat
 import io.ktor.client.call.body
-import io.ktor.client.plugins.cookies.cookies
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
@@ -71,7 +70,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun Login(
-	navController: NavController,
 	viewModel: AppViewModel = koinViewModel(),
 	changeTab: () -> Unit,
 ) {
@@ -92,6 +90,8 @@ fun Login(
 	var loading by remember { mutableStateOf(false) }
 	// Coroutines
 	val coroutineScope = rememberCoroutineScope()
+	// NavController
+	val navController = LocalNavController.current
 	
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -302,7 +302,7 @@ fun Login(
 						.requestFromAPI("login", HttpMethod.Post, LoginBody(email, password))
 					when (res.status) {
 						HttpStatusCode.OK -> {
-							println("COOKIES")
+							viewModel.setUser(res.body<UserResponseBody>().payload!!)
 							navController.navigate(Page.Home.route) {
 								popUpTo(Page.Auth.route) { inclusive = true }
 							}

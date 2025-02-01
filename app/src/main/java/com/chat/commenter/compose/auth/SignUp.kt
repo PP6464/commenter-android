@@ -1,10 +1,12 @@
 package com.chat.commenter.compose.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +24,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,12 +36,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,16 +55,24 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.chat.commenter.LocalNavController
+import com.chat.commenter.Page
 import com.chat.commenter.R
+import com.chat.commenter.api.NoPayloadResponseBody
+import com.chat.commenter.api.SignUpBody
+import com.chat.commenter.api.requestFromAPI
 import com.chat.commenter.state.AppViewModel
 import com.chat.commenter.ui.theme.Typography
 import com.chat.commenter.ui.theme.montserrat
+import io.ktor.client.call.body
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SignUp(
-	navController: NavController,
 	viewModel: AppViewModel = koinViewModel(),
 	changeTab: () -> Unit,
 ) {
@@ -77,14 +90,14 @@ fun SignUp(
 	var displayNameError by remember { mutableStateOf<String?>(null) }
 	var emailError by remember { mutableStateOf<String?>(null) }
 	var passwordError by remember { mutableStateOf<String?>(null) }
-	val displayNameMaxLength = 20
-	// String resources
-	val displayNameMaxLengthError =
-		stringResource(id = R.string.display_name_max_length, displayNameMaxLength)
-	val emailFormatError = stringResource(id = R.string.email_formatted_incorrectly)
-	val passwordLength = stringResource(id = R.string.password_length)
+	// Coroutines
+	val coroutineScope = rememberCoroutineScope()
 	// UI
 	val tsf = viewModel.getTSF()
+	var loading by remember { mutableStateOf(false) }
+	val context = LocalContext.current
+	// NavController
+	val navController = LocalNavController.current
 	
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -118,7 +131,7 @@ fun SignUp(
 		OutlinedTextField(
 			value = displayName,
 			onValueChange = {
-				displayName = it.take(displayNameMaxLength)
+				displayName = it.take(20)
 				displayNameError = null
 			},
 			textStyle = TextStyle(
@@ -188,7 +201,7 @@ fun SignUp(
 					),
 				)
 				Text(
-					text = "${displayName.length}/${displayNameMaxLength}",
+					text = "${displayName.length}/${20}",
 					style = TextStyle(
 						fontFamily = montserrat,
 						color = MaterialTheme.colorScheme.error,
@@ -197,7 +210,7 @@ fun SignUp(
 				)
 			}
 		} ?: Text(
-			text = "${displayName.length}/${displayNameMaxLength}",
+			text = "${displayName.length}/${20}",
 			style = TextStyle(
 				fontFamily = montserrat,
 				fontSize = Typography.bodyLarge.fontSize * tsf,
@@ -383,10 +396,59 @@ fun SignUp(
 		Spacer(modifier = Modifier.height((passwordError?.let { 0 } ?: 8).dp))
 		ElevatedButton(
 			onClick = {
-				displayNameError =
-					if (displayName.length < displayNameMaxLength) displayNameMaxLengthError else null
-				emailError = if (emailError == null) "Error" else null
-				passwordError = if (passwordError == null) "Error" else null
+				coroutineScope.launch {
+					loading = true
+					val res = viewModel.getHttpClient()!!.requestFromAPI(
+						path = "sign-up",
+						method = HttpMethod.Post,
+						SignUpBody(
+							displayName = displayName,
+							email = email,
+							password = password,
+						),
+					)
+					
+					when (res.status) {
+						HttpStatusCode.Created -> {
+							navController.navigate(Page.Home.route) {
+								popUpTo(Page.Auth.route) { inclusive = true }
+							}
+						}
+						
+						HttpStatusCode.NotAcceptable -> {
+							when (res.body<NoPayloadResponseBody>().message) {
+								"Password is too short" -> {
+									passwordError = context.resources.getString(R.string.password_length)
+								}
+								
+								"Display name is too long" -> {
+									displayName = ""
+									displayNameError = context.resources.getString(R.string.display_name_max_length)
+								}
+								
+								"Display name cannot be empty" -> {
+									displayNameError = context.resources.getString(R.string.display_name_empty)
+								}
+								
+								"Email is invalid" -> {
+									email = ""
+									emailError = context.resources.getString(R.string.email_formatted_incorrectly)
+								}
+							}
+						}
+						
+						HttpStatusCode.Conflict -> {
+							email = ""
+							emailError = context.resources.getString(R.string.email_in_use)
+						}
+						
+						HttpStatusCode.InternalServerError -> {
+							Toast.makeText(context, R.string.sign_up_again, Toast.LENGTH_SHORT).show()
+						}
+					}
+					
+					loading = false
+				}
 			},
 			colors = ButtonDefaults.elevatedButtonColors(
 				containerColor = colorResource(id = R.color.primary),
@@ -415,6 +477,10 @@ fun SignUp(
 				.clickable {
 					changeTab()
 				}
+		)
+		Spacer(modifier = Modifier.height(8.dp))
+		if (loading) CircularProgressIndicator(
+			color = MaterialTheme.colorScheme.secondary
 		)
 	}
 }

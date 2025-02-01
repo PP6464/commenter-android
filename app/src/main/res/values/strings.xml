@@ -5,9 +5,10 @@
 	<string name="hide_password">Hide password</string>
 	<string name="show_password">Show password</string>
 	<string name="login">Login</string>
-	<string name="sign_up">Sign up</string>
+	<string name="sign_up">Sign Up</string>
 	<string name="enter_display_name">Enter your display name</string>
-	<string name="display_name_max_length">Display name cannot be longer than %1d characters</string>
+	<string name="display_name_max_length">Display name cannot be longer than 20 characters</string>
+	<string name="display_name_empty">Display name cannot be empty</string>
 	<string name="email_formatted_incorrectly">Email should be formatted as abc@example.com</string>
 	<string name="password_length">Password must be at least 10 characters long</string>
 	<string name="sign_up_instead">Don\'t have an account? Sign up instead</string>
@@ -18,4 +19,8 @@
 	<string name="email_in_use">This email is already in use</string>
 	<string name="incorrect_password">Password is incorrect</string>
 	<string name="account_disabled">This account is disabled, try using another one</string>
+	<string name="home">Home</string>
+	<string name="profile">Profile</string>
+	<string name="logout">Logout</string>
+	<string name="auth">Authenticate</string>
 </resources>

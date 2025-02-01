@@ -33,7 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.chat.commenter.LocalNavController
 import com.chat.commenter.Page
 import com.chat.commenter.R
 import com.chat.commenter.api.requestFromAPI
@@ -47,7 +47,6 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Auth(
-	navController: NavController,
 	viewModel: AppViewModel = koinViewModel(),
 ) {
 	var tabIndex by remember { mutableIntStateOf(0) }
@@ -62,6 +61,7 @@ fun Auth(
 	)
 	val coroutineScope = rememberCoroutineScope()
 	val tsf = viewModel.getTSF()
+	val navController = LocalNavController.current
 	
 	LaunchedEffect(pagerState) {
 		snapshotFlow { pagerState.currentPage }.collect {
@@ -70,7 +70,7 @@ fun Auth(
 	}
 	
 	LaunchedEffect(Unit) {
-		val res = viewModel.getHttpClient()!!.requestFromAPI("re-auth")
+		val res = viewModel.getHttpClient()!!.requestFromAPI("re-auth", HttpMethod.Get)
 		if (res.status == HttpStatusCode.OK) {
 			navController.navigate(Page.Home.route) {
 				popUpTo(Page.Auth.route) { inclusive = true }
@@ -79,7 +79,8 @@ fun Auth(
 	}
 	
 	Scaffold(
-		modifier = Modifier.fillMaxSize(),
+		modifier = Modifier
+			.fillMaxSize(),
 		topBar = {
 			TopAppBar(
 				title = {
@@ -100,8 +101,8 @@ fun Auth(
 	) { padding ->
 		Column(
 			modifier = Modifier
-				.fillMaxSize()
 				.padding(padding)
+				.fillMaxSize()
 		) {
 			PrimaryTabRow(
 				selectedTabIndex = tabIndex,
@@ -155,13 +156,13 @@ fun Auth(
 			}
 			HorizontalPager(state = pagerState) {
 				when (it) {
-					0 -> Login(navController) {
+					0 -> Login() {
 						tabIndex = 1
 						coroutineScope.launch {
 							pagerState.animateScrollToPage(1)
 						}
 					}
-					else -> SignUp(navController) {
+					else -> SignUp() {
 						tabIndex = 0
 						coroutineScope.launch {
 							pagerState.animateScrollToPage(0)

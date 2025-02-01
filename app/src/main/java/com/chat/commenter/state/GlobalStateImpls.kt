@@ -44,7 +44,7 @@ data class UIState(
 interface UIStateHolder {
 	val uiState: MutableStateFlow<UIState>
 	fun loadState(context: Context)
-	fun updateState(state: UIState, context: Context)
+	fun updateState(state: UIState)
 }
 
 class UIStateHolderImpl : UIStateHolder {
@@ -61,7 +61,7 @@ class UIStateHolderImpl : UIStateHolder {
 		}
 	}
 	
-	override fun updateState(state: UIState, context: Context) {
+	override fun updateState(state: UIState) {
 		uiState.update { state }
 	}
 }
@@ -95,6 +95,10 @@ class AppViewModel(private val userState: UserStateHolder, private val uiState: 
 	
 	fun getUIMode() : String = uiState.uiState.value.uiMode
 	fun getTSF() : Double = uiState.uiState.value.tsf
+	fun setUIMode(uiMode : String) = uiState.updateState(uiState.uiState.value.copy(uiMode = uiMode))
+	fun setTSF(tsf : Double)  = uiState.updateState(uiState.uiState.value.copy(tsf = tsf))
 	fun getUser() : User? = userState.userState.value.user
+	fun setUser(user : User) = userState.updateUser(user)
+	fun logout() = userState.logout()
 	fun getHttpClient() : HttpClient? = httpClient.clientState.value
 }

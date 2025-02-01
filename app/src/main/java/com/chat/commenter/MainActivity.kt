@@ -8,19 +8,19 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.chat.commenter.compose.auth.Auth
 import com.chat.commenter.compose.home.Home
 import com.chat.commenter.state.AppViewModel
-import com.chat.commenter.state.UIStateHolder
 import com.chat.commenter.ui.theme.CommenterTheme
 import org.koin.androidx.compose.KoinAndroidContext
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
 	
@@ -48,7 +48,7 @@ fun Wrapper(
 	)
 	
 	viewModel.loadDefaults(LocalContext.current)
-
+	
 	CommenterTheme(
 		darkTheme = viewModel.getUIMode() == "dark" || (viewModel.getUIMode() == "system" && isSystemInDarkTheme())
 	) {
@@ -59,24 +59,42 @@ fun Wrapper(
 	}
 }
 
-sealed class Page(val route: String) {
-	data object Home: Page("home")
-	data object Auth: Page("auth")
+enum class Page {
+	Home,
+	Auth;
+	
+	val nameId
+		get() = when (this) {
+			Home -> R.string.home
+			Auth -> R.string.auth
+		}
+	
+	val route
+		get() = when (this) {
+			Home -> "home"
+			Auth -> "auth"
+		}
+}
+
+val LocalNavController = staticCompositionLocalOf<NavController> {
+	error("No NavController provided")
 }
 
 @Composable
-fun Navigator(viewModel : AppViewModel = koinViewModel()) {
+fun Navigator() {
 	val navController = rememberNavController()
 	
-	NavHost(
-		navController = navController,
-		startDestination = Page.Auth.route,
-	) {
-		composable(route = Page.Auth.route) {
-			Auth(navController = navController)
-		}
-		composable(route = Page.Home.route) {
-			Home()
+	CompositionLocalProvider(value = LocalNavController provides navController) {
+		NavHost(
+			navController = navController,
+			startDestination = Page.Auth.route,
+		) {
+			composable(route = Page.Auth.route) {
+				Auth()
+			}
+			composable(route = Page.Home.route) {
+				Home()
+			}
 		}
 	}
 }

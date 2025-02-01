@@ -30,7 +30,7 @@ fun createHttpClient(context : Context) : HttpClient {
 
 const val apiUrl = "https://game-repeatedly-glowworm.ngrok-free.app/" // Change for production
 
-suspend fun HttpClient.requestFromAPI(path : String, method : HttpMethod = HttpMethod.Get) : HttpResponse {
+suspend fun HttpClient.requestFromAPI(path : String, method : HttpMethod) : HttpResponse {
 	return when (method) {
 		HttpMethod.Get -> get(
 			HttpRequestBuilder().apply {
@@ -48,7 +48,7 @@ suspend fun HttpClient.requestFromAPI(path : String, method : HttpMethod = HttpM
 	}
 }
 
-suspend inline fun <reified T> HttpClient.requestFromAPI(path : String, method : HttpMethod = HttpMethod.Get, body : T?) : HttpResponse {
+suspend inline fun <reified T> HttpClient.requestFromAPI(path : String, method : HttpMethod, body : T?) : HttpResponse {
 	return when (method) {
 		HttpMethod.Get -> get(
 			HttpRequestBuilder().apply {
