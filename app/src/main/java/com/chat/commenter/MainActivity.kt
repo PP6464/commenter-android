@@ -15,8 +15,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.chat.commenter.compose.Profile
 import com.chat.commenter.compose.auth.Auth
 import com.chat.commenter.compose.home.Home
+import com.chat.commenter.compose.settings.Settings
 import com.chat.commenter.state.AppViewModel
 import com.chat.commenter.ui.theme.CommenterTheme
 import org.koin.androidx.compose.KoinAndroidContext
@@ -61,18 +63,24 @@ fun Wrapper(
 
 enum class Page {
 	Home,
-	Auth;
+	Auth,
+	Settings,
+	Profile;
 	
 	val nameId
 		get() = when (this) {
 			Home -> R.string.home
 			Auth -> R.string.auth
+			Settings -> R.string.settings
+			Profile -> R.string.profile
 		}
 	
 	val route
 		get() = when (this) {
 			Home -> "home"
 			Auth -> "auth"
+			Settings -> "settings"
+			Profile -> "profile"
 		}
 }
 
@@ -94,6 +102,12 @@ fun Navigator() {
 			}
 			composable(route = Page.Home.route) {
 				Home()
+			}
+			composable(route = Page.Settings.route) {
+				Settings()
+			}
+			composable(route = Page.Profile.route) {
+				Profile()
 			}
 		}
 	}

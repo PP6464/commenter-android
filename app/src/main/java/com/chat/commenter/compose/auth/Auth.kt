@@ -156,13 +156,13 @@ fun Auth(
 			}
 			HorizontalPager(state = pagerState) {
 				when (it) {
-					0 -> Login() {
+					0 -> Login {
 						tabIndex = 1
 						coroutineScope.launch {
 							pagerState.animateScrollToPage(1)
 						}
 					}
-					else -> SignUp() {
+					else -> SignUp {
 						tabIndex = 0
 						coroutineScope.launch {
 							pagerState.animateScrollToPage(0)

@@ -38,7 +38,7 @@ class UserStateHolderImpl : UserStateHolder {
 
 data class UIState(
 	val uiMode: String = "system",
-	val tsf: Double = 1.0
+	val tsf: Float = 1.0F
 )
 
 interface UIStateHolder {
@@ -56,7 +56,7 @@ class UIStateHolderImpl : UIStateHolder {
 		uiState.update {
 			UIState(
 				preferences.getString("uiMode", "system") ?: "system",
-				preferences.getFloat("tsf", 1.0f).toDouble(),
+				preferences.getFloat("tsf", 1.0f),
 			)
 		}
 	}
@@ -94,9 +94,9 @@ class AppViewModel(private val userState: UserStateHolder, private val uiState: 
 	}
 	
 	fun getUIMode() : String = uiState.uiState.value.uiMode
-	fun getTSF() : Double = uiState.uiState.value.tsf
+	fun getTSF() : Float = uiState.uiState.value.tsf
 	fun setUIMode(uiMode : String) = uiState.updateState(uiState.uiState.value.copy(uiMode = uiMode))
-	fun setTSF(tsf : Double)  = uiState.updateState(uiState.uiState.value.copy(tsf = tsf))
+	fun setTSF(tsf : Float)  = uiState.updateState(uiState.uiState.value.copy(tsf = tsf))
 	fun getUser() : User? = userState.userState.value.user
 	fun setUser(user : User) = userState.updateUser(user)
 	fun logout() = userState.logout()

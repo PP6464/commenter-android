@@ -23,4 +23,12 @@
 	<string name="profile">Profile</string>
 	<string name="logout">Logout</string>
 	<string name="auth">Authenticate</string>
+	<string name="settings">Settings</string>
+	<string name="tsf">Text Scale Factor</string>
+	<string name="ui_mode">UI Mode</string>
+	<string-array name="ui_mode_options">
+		<item>System</item>
+		<item>Light</item>
+		<item>Dark</item>
+	</string-array>
 </resources>
