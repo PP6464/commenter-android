@@ -37,9 +37,11 @@ import androidx.compose.ui.unit.sp
 import com.chat.commenter.LocalNavController
 import com.chat.commenter.Page
 import com.chat.commenter.R
+import com.chat.commenter.api.UserResponseBody
 import com.chat.commenter.api.requestFromAPI
 import com.chat.commenter.state.AppViewModel
 import com.chat.commenter.ui.theme.montserrat
+import io.ktor.client.call.body
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
@@ -75,6 +77,7 @@ fun Auth(
 	LaunchedEffect(Unit) {
 		val res = httpClient!!.requestFromAPI("re-auth", HttpMethod.Get)
 		if (res.status == HttpStatusCode.OK) {
+			viewModel.setUser(res.body<UserResponseBody>().payload!!)
 			navController.navigate(Page.Home.route) {
 				popUpTo(Page.Auth.route) { inclusive = true }
 			}

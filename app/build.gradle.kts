@@ -66,6 +66,8 @@ dependencies {
 	implementation(libs.ktor.serialization.kotlinx.json)
 	implementation(libs.koin.androidx.compose)
 	implementation(libs.koin.androidx.compose.navigation)
+	implementation(libs.coil.compose)
+	implementation(libs.coil.network.okhttp)
 	testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)
