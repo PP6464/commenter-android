@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +32,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +60,7 @@ import com.chat.commenter.Page
 import com.chat.commenter.R
 import com.chat.commenter.api.NoPayloadResponseBody
 import com.chat.commenter.api.SignUpBody
+import com.chat.commenter.api.UserResponseBody
 import com.chat.commenter.api.requestFromAPI
 import com.chat.commenter.state.AppViewModel
 import com.chat.commenter.ui.theme.Typography
@@ -70,7 +71,6 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SignUp(
 	viewModel: AppViewModel = koinViewModel(),
@@ -93,11 +93,14 @@ fun SignUp(
 	// Coroutines
 	val coroutineScope = rememberCoroutineScope()
 	// UI
-	val tsf = viewModel.getTSF()
+	val ui by viewModel.uiState.collectAsState()
+	val tsf = ui.tsf
 	var loading by remember { mutableStateOf(false) }
 	val context = LocalContext.current
 	// NavController
 	val navController = LocalNavController.current
+	// HTTP
+	val httpClient by viewModel.clientState.collectAsState()
 	
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -398,7 +401,7 @@ fun SignUp(
 			onClick = {
 				coroutineScope.launch {
 					loading = true
-					val res = viewModel.getHttpClient()!!.requestFromAPI(
+					val res = httpClient!!.requestFromAPI(
 						path = "sign-up",
 						method = HttpMethod.Post,
 						SignUpBody(
@@ -410,6 +413,7 @@ fun SignUp(
 					
 					when (res.status) {
 						HttpStatusCode.Created -> {
+							viewModel.setUser(res.body<UserResponseBody>().payload!!)
 							navController.navigate(Page.Home.route) {
 								popUpTo(Page.Auth.route) { inclusive = true }
 							}

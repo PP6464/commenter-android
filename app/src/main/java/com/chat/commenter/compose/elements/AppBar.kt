@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +41,9 @@ fun AppBar(
 	pageToHide: Page? = null,
 	viewModel: AppViewModel = koinViewModel(),
 ) {
-	val tsf = viewModel.getTSF()
+	val ui by viewModel.uiState.collectAsState()
+	val tsf = ui.tsf
+	val httpClient by viewModel.clientState.collectAsState()
 	var expanded by remember { mutableStateOf(false) }
 	val navController = LocalNavController.current
 	val coroutineScope = rememberCoroutineScope()
@@ -94,9 +97,9 @@ fun AppBar(
 						onClick = {
 							coroutineScope.launch {
 								viewModel.logout()
-								viewModel.getHttpClient()!!.requestFromAPI("logout", HttpMethod.Post)
+								httpClient!!.requestFromAPI("logout", HttpMethod.Post)
 								println("CHECK COOKIES ARE EMPTY")
-								println(viewModel.getHttpClient()!!.cookies(apiUrl))
+								println(httpClient!!.cookies(apiUrl))
 								navController.navigate(Page.Auth.route) {
 									popUpTo(navController.currentDestination!!.route!!) { inclusive = true }
 								}

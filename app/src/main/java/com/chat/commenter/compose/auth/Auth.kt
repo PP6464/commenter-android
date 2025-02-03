@@ -20,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -60,8 +61,10 @@ fun Auth(
 		stringResource(id = R.string.sign_up),
 	)
 	val coroutineScope = rememberCoroutineScope()
-	val tsf = viewModel.getTSF()
+	val ui by viewModel.uiState.collectAsState()
+	val tsf = ui.tsf
 	val navController = LocalNavController.current
+	val httpClient by viewModel.clientState.collectAsState()
 	
 	LaunchedEffect(pagerState) {
 		snapshotFlow { pagerState.currentPage }.collect {
@@ -70,7 +73,7 @@ fun Auth(
 	}
 	
 	LaunchedEffect(Unit) {
-		val res = viewModel.getHttpClient()!!.requestFromAPI("re-auth", HttpMethod.Get)
+		val res = httpClient!!.requestFromAPI("re-auth", HttpMethod.Get)
 		if (res.status == HttpStatusCode.OK) {
 			navController.navigate(Page.Home.route) {
 				popUpTo(Page.Auth.route) { inclusive = true }

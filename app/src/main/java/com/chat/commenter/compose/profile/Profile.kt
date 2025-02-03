@@ -1,4 +1,4 @@
-package com.chat.commenter.compose
+package com.chat.commenter.compose.profile
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,13 +86,16 @@ fun Login(
 	var emailError by remember { mutableStateOf<String?>(null) }
 	var passwordError by remember { mutableStateOf<String?>(null) }
 	// UI
-	val tsf = viewModel.getTSF()
+	val ui by viewModel.uiState.collectAsState()
+	val tsf = ui.tsf
 	val context = LocalContext.current
 	var loading by remember { mutableStateOf(false) }
 	// Coroutines
 	val coroutineScope = rememberCoroutineScope()
 	// NavController
 	val navController = LocalNavController.current
+	// HTTP
+	val httpClient by viewModel.clientState.collectAsState()
 	
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -298,7 +302,7 @@ fun Login(
 			onClick = {
 				coroutineScope.launch {
 					loading = true
-					val res = viewModel.getHttpClient()!!
+					val res = httpClient!!
 						.requestFromAPI("login", HttpMethod.Post, LoginBody(email, password))
 					when (res.status) {
 						HttpStatusCode.OK -> {

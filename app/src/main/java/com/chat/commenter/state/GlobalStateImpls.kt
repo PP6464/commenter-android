@@ -2,15 +2,17 @@ package com.chat.commenter.state
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.chat.commenter.api.createHttpClient
 import com.chat.commenter.schemas.User
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 data class UserState(
@@ -24,8 +26,7 @@ interface UserStateHolder {
 }
 
 class UserStateHolderImpl : UserStateHolder {
-	override val userState: MutableStateFlow<UserState>
-		get() = MutableStateFlow(UserState())
+	override val userState = MutableStateFlow(UserState())
 	
 	override fun updateUser(user: User) {
 		userState.update { UserState(user) }
@@ -45,11 +46,11 @@ interface UIStateHolder {
 	val uiState: MutableStateFlow<UIState>
 	fun loadState(context: Context)
 	fun updateState(state: UIState)
+	fun saveState()
 }
 
-class UIStateHolderImpl : UIStateHolder {
-	override val uiState: MutableStateFlow<UIState>
-		get() = MutableStateFlow(UIState())
+class UIStateHolderImpl(private val context: Context) : UIStateHolder {
+	override val uiState = MutableStateFlow(UIState())
 	
 	override fun loadState(context: Context) {
 		val preferences = context.getSharedPreferences("ui", MODE_PRIVATE)
@@ -63,11 +64,21 @@ class UIStateHolderImpl : UIStateHolder {
 	
 	override fun updateState(state: UIState) {
 		uiState.update { state }
+		saveState()
+	}
+	
+	override fun saveState() {
+		val preferences = context.getSharedPreferences("ui", MODE_PRIVATE)
+		preferences
+			.edit()
+			.putString("uiMode", uiState.value.uiMode)
+			.putFloat("tsf", uiState.value.tsf)
+			.apply()
 	}
 }
 
 interface HttpClientStateHolder {
-	val clientState : MutableStateFlow<HttpClient?>
+	val clientState: MutableStateFlow<HttpClient?>
 	fun createClient(context: Context)
 }
 
@@ -80,25 +91,29 @@ class HttpClientStateHolderImpl : HttpClientStateHolder {
 }
 
 val appModule = module {
-	singleOf(::UserStateHolderImpl) { bind<UserStateHolder>() }
-	singleOf(::UIStateHolderImpl) { bind<UIStateHolder>() }
-	singleOf(::HttpClientStateHolderImpl) { bind<HttpClientStateHolder>() }
-	viewModelOf(::AppViewModel)
+	single<UserStateHolder> { UserStateHolderImpl() }
+	single<UIStateHolder> { UIStateHolderImpl(androidContext()) }
+	single<HttpClientStateHolder> { HttpClientStateHolderImpl() }
+	viewModel { AppViewModel(get(), get(), get()) }
 }
 
-class AppViewModel(private val userState: UserStateHolder, private val uiState: UIStateHolder, private val httpClient: HttpClientStateHolder) : ViewModel() {
+class AppViewModel(
+	private val _userState: UserStateHolder,
+	private val _uiState: UIStateHolder,
+	private val _httpClient: HttpClientStateHolder,
+) : ViewModel() {
 	fun loadDefaults(context: Context) {
-		uiState.loadState(context)
-		httpClient.createClient(context)
+		_uiState.loadState(context)
+		_httpClient.createClient(context)
 		println("LOADED DEFAULTS")
 	}
 	
-	fun getUIMode() : String = uiState.uiState.value.uiMode
-	fun getTSF() : Float = uiState.uiState.value.tsf
-	fun setUIMode(uiMode : String) = uiState.updateState(uiState.uiState.value.copy(uiMode = uiMode))
-	fun setTSF(tsf : Float)  = uiState.updateState(uiState.uiState.value.copy(tsf = tsf))
-	fun getUser() : User? = userState.userState.value.user
-	fun setUser(user : User) = userState.updateUser(user)
-	fun logout() = userState.logout()
-	fun getHttpClient() : HttpClient? = httpClient.clientState.value
+	val userState = _userState.userState.asStateFlow()
+	val uiState = _uiState.uiState.asStateFlow()
+	val clientState = _httpClient.clientState.asStateFlow()
+	
+	fun setUIMode(uiMode: String) = _uiState.updateState(_uiState.uiState.value.copy(uiMode = uiMode))
+	fun setTSF(tsf: Float) = _uiState.updateState(_uiState.uiState.value.copy(tsf = tsf))
+	fun setUser(user: User) = _userState.updateUser(user)
+	fun logout() = _userState.logout()
 }

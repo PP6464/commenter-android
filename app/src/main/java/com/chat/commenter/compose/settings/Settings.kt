@@ -38,8 +38,8 @@ fun Settings(
 ) {
 	val uiModeOptions = listOf("system", "light", "dark")
 	val localisedUiModeOptions = stringArrayResource(id = R.array.ui_mode_options)
-	var uiMode by remember { mutableStateOf(viewModel.getUIMode()) }
-	var tsf by remember { mutableFloatStateOf(viewModel.getTSF()) }
+	var uiMode by remember { mutableStateOf(viewModel.uiState.value.uiMode) }
+	var tsf by remember { mutableFloatStateOf(viewModel.uiState.value.tsf) }
 	
 	Scaffold(
 		topBar = {
@@ -69,7 +69,7 @@ fun Settings(
 					tsf = it
 					viewModel.setTSF(it)
 				},
-				steps = 10,
+				steps = 11,
 				valueRange = 0.5F..1.5F,
 				modifier = Modifier
 					.padding(horizontal = 16.dp)

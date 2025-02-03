@@ -8,6 +8,9 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -15,7 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.chat.commenter.compose.Profile
+import com.chat.commenter.compose.profile.Profile
 import com.chat.commenter.compose.auth.Auth
 import com.chat.commenter.compose.home.Home
 import com.chat.commenter.compose.settings.Settings
@@ -48,11 +51,16 @@ fun Wrapper(
 		handleColor = colorResource(id = R.color.primary),
 		backgroundColor = colorResource(id = R.color.primary).copy(alpha = 0x99.toFloat() / 256),
 	)
+	val ui by viewModel.uiState.collectAsState()
+	val uiMode = ui.uiMode
+	val context = LocalContext.current
 	
-	viewModel.loadDefaults(LocalContext.current)
+	LaunchedEffect(Unit) {
+		viewModel.loadDefaults(context)
+	}
 	
 	CommenterTheme(
-		darkTheme = viewModel.getUIMode() == "dark" || (viewModel.getUIMode() == "system" && isSystemInDarkTheme())
+		darkTheme = uiMode == "dark" || (uiMode == "system" && isSystemInDarkTheme())
 	) {
 		CompositionLocalProvider(
 			value = LocalTextSelectionColors provides textSelectionColours,
