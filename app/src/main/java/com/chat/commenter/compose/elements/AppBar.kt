@@ -96,13 +96,13 @@ fun AppBar(
 						},
 						onClick = {
 							coroutineScope.launch {
-								viewModel.logout()
 								httpClient!!.requestFromAPI("logout", HttpMethod.Post)
 								println("CHECK COOKIES ARE EMPTY")
 								println(httpClient!!.cookies(apiUrl))
 								navController.navigate(Page.Auth.route) {
 									popUpTo(navController.currentDestination!!.route!!) { inclusive = true }
 								}
+								viewModel.logout()
 							}
 						},
 					)

@@ -204,7 +204,7 @@ fun SignUp(
 					),
 				)
 				Text(
-					text = "${displayName.length}/${20}",
+					text = "${displayName.length}/20",
 					style = TextStyle(
 						fontFamily = montserrat,
 						color = MaterialTheme.colorScheme.error,
@@ -213,7 +213,7 @@ fun SignUp(
 				)
 			}
 		} ?: Text(
-			text = "${displayName.length}/${20}",
+			text = "${displayName.length}/20",
 			style = TextStyle(
 				fontFamily = montserrat,
 				fontSize = Typography.bodyLarge.fontSize * tsf,

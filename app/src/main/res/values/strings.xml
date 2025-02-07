@@ -26,6 +26,9 @@
 	<string name="settings">Settings</string>
 	<string name="tsf">Text Scale Factor</string>
 	<string name="ui_mode">UI Mode</string>
+	<string name="save_changes">Save changes</string>
+	<string name="enter_status">Enter your status</string>
+	<string name="leave_password_empty">Leave this field empty if you don\'t want to change your password</string>
 	<string-array name="ui_mode_options">
 		<item>System</item>
 		<item>Light</item>
