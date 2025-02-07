@@ -17,13 +17,13 @@ data class LoginBody(
 )
 
 @Serializable
-data class NoPayloadResponseBody(
+data class EmptyResponse(
 	val message : String,
 	val code : Int,
 )
 
 @Serializable
-data class UserResponseBody(
+data class UserResponse(
 	val message : String,
 	val code : Int,
 	val payload : User? = null,

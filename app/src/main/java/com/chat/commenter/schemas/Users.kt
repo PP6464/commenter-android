@@ -8,5 +8,6 @@ data class User(
 	val displayName: String,
 	val email: String,
 	val pic: String,
+	val status : String,
 	val disabled: Boolean,
 )

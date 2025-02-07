@@ -57,8 +57,8 @@ import com.chat.commenter.LocalNavController
 import com.chat.commenter.Page
 import com.chat.commenter.R
 import com.chat.commenter.api.LoginBody
-import com.chat.commenter.api.NoPayloadResponseBody
-import com.chat.commenter.api.UserResponseBody
+import com.chat.commenter.api.EmptyResponse
+import com.chat.commenter.api.UserResponse
 import com.chat.commenter.api.requestFromAPI
 import com.chat.commenter.state.AppViewModel
 import com.chat.commenter.ui.theme.Typography
@@ -306,7 +306,7 @@ fun Login(
 						.requestFromAPI("login", HttpMethod.Post, LoginBody(email, password))
 					when (res.status) {
 						HttpStatusCode.OK -> {
-							viewModel.setUser(res.body<UserResponseBody>().payload!!)
+							viewModel.setUser(res.body<UserResponse>().payload!!)
 							navController.navigate(Page.Home.route) {
 								popUpTo(Page.Auth.route) { inclusive = true }
 							}
@@ -319,11 +319,11 @@ fun Login(
 						}
 						
 						HttpStatusCode.NotAcceptable -> {
-							if (res.body<NoPayloadResponseBody>().message == "This account is disabled") {
+							if (res.body<EmptyResponse>().message == "This account is disabled") {
 								email = ""
 								password = ""
 								emailError = context.resources.getString(R.string.account_disabled)
-							} else if (res.body<NoPayloadResponseBody>().message == "Incorrect password") {
+							} else if (res.body<EmptyResponse>().message == "Incorrect password") {
 								password = ""
 								passwordError = context.resources.getString(R.string.incorrect_password)
 							}
