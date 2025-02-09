@@ -6,14 +6,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,11 +22,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -50,8 +42,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,6 +52,7 @@ import com.chat.commenter.api.EmptyResponse
 import com.chat.commenter.api.SignUpBody
 import com.chat.commenter.api.UserResponse
 import com.chat.commenter.api.requestFromAPI
+import com.chat.commenter.compose.elements.MyTextField
 import com.chat.commenter.state.AppViewModel
 import com.chat.commenter.ui.theme.Typography
 import com.chat.commenter.ui.theme.montserrat
@@ -131,271 +122,60 @@ fun SignUp(
 			)
 		)
 		Spacer(modifier = Modifier.height(8.dp))
-		OutlinedTextField(
+		MyTextField(
 			value = displayName,
 			onValueChange = {
-				displayName = it.take(20)
+				displayName = it
 				displayNameError = null
 			},
-			textStyle = TextStyle(
-				fontFamily = montserrat,
-				fontSize = Typography.bodyLarge.fontSize * tsf,
-			),
-			isError = displayNameError != null,
-			singleLine = true,
-			label = {
-				Text(
-					stringResource(id = R.string.enter_display_name),
-					fontSize = Typography.bodyLarge.fontSize * tsf,
-					fontFamily = montserrat,
-				)
+			hasFocus = displayNameHasFocus,
+			onFocusChanged = {
+				displayNameHasFocus = it.hasFocus
 			},
-			placeholder = {
-				Text(
-					stringResource(id = R.string.enter_display_name),
-					fontSize = Typography.bodyLarge.fontSize * tsf,
-				)
-			},
-			leadingIcon = {
-				Icon(
-					imageVector = Icons.Default.Person,
-					contentDescription = null,
-					tint =
-					if (displayNameError != null)
-						MaterialTheme.colorScheme.error
-					else if (displayNameHasFocus)
-						MaterialTheme.colorScheme.secondary
-					else
-						Color.Gray,
-				)
-			},
-			colors = OutlinedTextFieldDefaults.colors(
-				cursorColor = MaterialTheme.colorScheme.secondary,
-				errorCursorColor = MaterialTheme.colorScheme.error,
-				focusedBorderColor = MaterialTheme.colorScheme.secondary,
-				errorBorderColor = MaterialTheme.colorScheme.error,
-				focusedLabelColor = MaterialTheme.colorScheme.secondary,
-				errorLabelColor = MaterialTheme.colorScheme.error,
-			),
-			modifier = Modifier
-				.padding(horizontal = 16.dp)
-				.width(400.dp)
-				.onFocusChanged {
-					displayNameHasFocus = it.hasFocus
-				},
+			error = displayNameError,
+			charLimit = 20,
+			leadingIcon = Icons.Default.Person,
+			placeholder = stringResource(R.string.enter_display_name),
 		)
-		displayNameError?.let {
-			Row(
-				horizontalArrangement = Arrangement.SpaceBetween,
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(
-						top = 5.dp,
-						start = 16.dp,
-						end = 16.dp,
-					)
-			) {
-				Text(
-					text = it,
-					style = TextStyle(
-						fontFamily = montserrat,
-						color = MaterialTheme.colorScheme.error,
-						fontSize = Typography.bodyLarge.fontSize * tsf,
-					),
-				)
-				Text(
-					text = "${displayName.length}/20",
-					style = TextStyle(
-						fontFamily = montserrat,
-						color = MaterialTheme.colorScheme.error,
-						fontSize = Typography.bodyLarge.fontSize * tsf,
-					),
-				)
-			}
-		} ?: Text(
-			text = "${displayName.length}/20",
-			style = TextStyle(
-				fontFamily = montserrat,
-				fontSize = Typography.bodyLarge.fontSize * tsf,
-			),
-			modifier = Modifier
-				.align(Alignment.End)
-				.padding(
-					top = 5.dp,
-					start = 16.dp,
-					end = 16.dp,
-				)
-		)
-		OutlinedTextField(
+		MyTextField(
 			value = email,
 			onValueChange = {
 				email = it
 				emailError = null
 			},
-			textStyle = TextStyle(
-				fontFamily = montserrat,
-				fontSize = Typography.bodyLarge.fontSize * tsf,
+			onFocusChanged = {
+				emailHasFocus = it.hasFocus
+			},
+			hasFocus = emailHasFocus,
+			leadingIcon = Icons.Default.Email,
+			keyboardOptions = KeyboardOptions(
+				keyboardType = KeyboardType.Email,
 			),
-			isError = emailError != null,
-			singleLine = true,
-			label = {
-				Text(
-					stringResource(id = R.string.enter_email),
-					fontSize = Typography.bodyLarge.fontSize * tsf,
-					fontFamily = montserrat,
-				)
-			},
-			placeholder = {
-				Text(
-					stringResource(id = R.string.enter_email),
-					fontSize = Typography.bodyLarge.fontSize * tsf,
-				)
-			},
-			leadingIcon = {
-				Icon(
-					imageVector = Icons.Default.Email,
-					contentDescription = null,
-					tint =
-					if (emailError != null)
-						MaterialTheme.colorScheme.error
-					else if (emailHasFocus)
-						MaterialTheme.colorScheme.secondary
-					else
-						Color.Gray,
-				)
-			},
-			colors = OutlinedTextFieldDefaults.colors(
-				cursorColor = MaterialTheme.colorScheme.secondary,
-				errorCursorColor = MaterialTheme.colorScheme.error,
-				focusedBorderColor = MaterialTheme.colorScheme.secondary,
-				errorBorderColor = MaterialTheme.colorScheme.error,
-				focusedLabelColor = MaterialTheme.colorScheme.secondary,
-				errorLabelColor = MaterialTheme.colorScheme.error,
-			),
-			modifier = Modifier
-				.padding(horizontal = 16.dp)
-				.width(400.dp)
-				.onFocusChanged {
-					emailHasFocus = it.hasFocus
-				},
+			placeholder = stringResource(R.string.enter_email),
+			error = emailError,
 		)
-		emailError?.let {
-			Text(
-				text = it,
-				style = TextStyle(
-					fontFamily = montserrat,
-					color = MaterialTheme.colorScheme.error,
-					fontSize = Typography.bodyLarge.fontSize * tsf,
-				),
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(
-						top = 5.dp,
-						start = 16.dp,
-						end = 16.dp,
-					)
-					.align(Alignment.Start)
-			)
-		}
 		Spacer(modifier = Modifier.height((emailError?.let { 0 } ?: 8).dp))
-		OutlinedTextField(
+		MyTextField(
 			value = password,
 			onValueChange = {
 				password = it
 				passwordError = null
 			},
-			textStyle = TextStyle(
-				fontSize = Typography.bodyLarge.fontSize * tsf,
-				fontFamily = montserrat,
-			),
-			isError = passwordError != null,
-			singleLine = true,
-			visualTransformation =
-			if (showPassword)
-				VisualTransformation.None
-			else
-				PasswordVisualTransformation(),
+			hasFocus = passwordHasFocus,
+			onFocusChanged = {
+				passwordHasFocus = it.hasFocus
+			},
+			supportingText = stringResource(R.string.password_length_shortened),
+			leadingIcon = Icons.Default.Lock,
+			trailingIcon = if (showPassword) painterResource(R.drawable.ic_visibility) else painterResource(R.drawable.ic_visibility_off),
+			trailingIconOnPress = { showPassword = !showPassword },
+			error = passwordError,
+			obscureText = !showPassword,
 			keyboardOptions = KeyboardOptions(
 				keyboardType = KeyboardType.Password,
 			),
-			label = {
-				Text(
-					stringResource(id = R.string.enter_password),
-					fontSize = Typography.bodyLarge.fontSize * tsf,
-					fontFamily = montserrat,
-				)
-			},
-			placeholder = {
-				Text(
-					stringResource(id = R.string.enter_password),
-					fontSize = Typography.bodyLarge.fontSize * tsf,
-				)
-			},
-			leadingIcon = {
-				Icon(
-					imageVector = Icons.Default.Lock,
-					contentDescription = null,
-					tint =
-					if (passwordError != null)
-						MaterialTheme.colorScheme.error
-					else if (passwordHasFocus)
-						MaterialTheme.colorScheme.secondary
-					else
-						Color.Gray,
-				)
-			},
-			trailingIcon = {
-				IconButton(
-					onClick = {
-						showPassword = !showPassword
-					},
-				) {
-					Icon(
-						painter = painterResource(id = if (showPassword) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
-						contentDescription = null,
-						tint =
-						if (passwordError != null)
-							MaterialTheme.colorScheme.error
-						else if (passwordHasFocus)
-							MaterialTheme.colorScheme.secondary
-						else
-							Color.Gray,
-					)
-				}
-			},
-			colors = OutlinedTextFieldDefaults.colors(
-				cursorColor = MaterialTheme.colorScheme.secondary,
-				errorCursorColor = MaterialTheme.colorScheme.error,
-				focusedBorderColor = MaterialTheme.colorScheme.secondary,
-				errorBorderColor = MaterialTheme.colorScheme.error,
-				focusedLabelColor = MaterialTheme.colorScheme.secondary,
-				errorLabelColor = MaterialTheme.colorScheme.error,
-			),
-			modifier = Modifier
-				.padding(horizontal = 16.dp)
-				.width(400.dp)
-				.onFocusChanged {
-					passwordHasFocus = it.hasFocus
-				},
+			placeholder = stringResource(R.string.enter_password),
 		)
-		passwordError?.let {
-			Text(
-				text = it,
-				style = TextStyle(
-					fontFamily = montserrat,
-					color = MaterialTheme.colorScheme.error,
-					fontSize = Typography.bodyLarge.fontSize * tsf,
-				),
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(
-						top = 5.dp,
-						start = 16.dp,
-						end = 16.dp,
-					)
-					.align(Alignment.Start)
-			)
-		}
 		Spacer(modifier = Modifier.height((passwordError?.let { 0 } ?: 8).dp))
 		ElevatedButton(
 			onClick = {
