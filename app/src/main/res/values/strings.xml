@@ -2,6 +2,10 @@
 	<string name="app_name" translatable="false">Commenter</string>
 	<string name="enter_email">Enter your email</string>
 	<string name="enter_password">Enter your password</string>
+	<string name="enter_new_email">Enter new email</string>
+	<string name="enter_new_password">Enter new password</string>
+	<string name="enter_new_display_name">Enter new display name</string>
+	<string name="enter_new_status">Enter new status</string>
 	<string name="hide_password">Hide password</string>
 	<string name="show_password">Show password</string>
 	<string name="login">Login</string>
