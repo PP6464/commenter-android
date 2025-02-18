@@ -1,5 +1,6 @@
 [versions]
-agp = "8.8.0"
+agp = "8.8.1"
+cmpImagePickNCrop = "1.0.8"
 coilCompose = "3.0.4"
 koin = "4.0.2"
 kotlin = "2.1.0"
@@ -9,12 +10,13 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
-composeBom = "2025.01.01"
-navigation = "2.8.6"
+composeBom = "2025.02.00"
+navigation = "2.8.7"
 ktor = "3.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+cmp-image-pick-n-crop = { module = "network.chaintech:cmp-image-pick-n-crop", version.ref = "cmpImagePickNCrop" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

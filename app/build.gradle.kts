@@ -68,6 +68,7 @@ dependencies {
 	implementation(libs.koin.androidx.compose.navigation)
 	implementation(libs.coil.compose)
 	implementation(libs.coil.network.okhttp)
+	implementation(libs.cmp.image.pick.n.crop)
 	testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)
