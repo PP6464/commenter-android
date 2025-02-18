@@ -1,5 +1,6 @@
 package com.chat.commenter.compose.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.chat.commenter.LocalNavController
 import com.chat.commenter.Page
 import com.chat.commenter.R
+import com.chat.commenter.api.EmptyResponse
 import com.chat.commenter.api.UserResponse
 import com.chat.commenter.api.requestFromAPI
 import com.chat.commenter.state.AppViewModel
@@ -67,6 +70,7 @@ fun Auth(
 	val tsf = ui.tsf
 	val navController = LocalNavController.current
 	val httpClient by viewModel.clientState.collectAsState()
+	val context = LocalContext.current
 	
 	LaunchedEffect(pagerState) {
 		snapshotFlow { pagerState.currentPage }.collect {
@@ -81,6 +85,14 @@ fun Auth(
 			navController.navigate(Page.Home.route) {
 				popUpTo(Page.Auth.route) { inclusive = true }
 			}
+		} else if (res.status == HttpStatusCode.NotAcceptable && res.body<EmptyResponse>().message == "JWT is expired") {
+			Toast
+				.makeText(
+					context,
+					context.resources.getString(R.string.expired_session),
+					Toast.LENGTH_SHORT,
+				)
+				.show()
 		}
 	}
 	
