@@ -13,7 +13,7 @@
 	<string name="enter_display_name">Enter your display name</string>
 	<string name="display_name_max_length">Display name cannot be longer than 20 characters</string>
 	<string name="display_name_empty">Display name cannot be empty</string>
-	<string name="email_formatted_incorrectly">Email should be formatted as abc@example.com</string>
+	<string name="email_formatted_incorrectly">Email format should be abc@example.com</string>
 	<string name="password_length">Password must be at least 10 characters long</string>
 	<string name="password_length_shortened">Min. 10 characters</string>
 	<string name="sign_up_instead">Don\'t have an account? Sign up instead</string>
@@ -34,9 +34,24 @@
 	<string name="save_changes">Save changes</string>
 	<string name="enter_status">Enter your status</string>
 	<string name="leave_password_empty">Leave this field empty if you don\'t want to change your password</string>
+	<string name="confirm">Confirm</string>
+	<string name="cancel">Cancel</string>
+	<string name="enter_url">Enter URL</string>
+	<string name="invalid_image_url">This URL is invalid as it is not an image</string>
+	<string name="pic_too_large">Picture uploaded is too large</string>
+	<string name="status_length">Status cannot be longer than 50 characters</string>
+	<string name="save_changes_again">Please try saving changes again</string>
+	<string name="expired_session">Session expired. Please login again</string>
+	<string name="saved_changes_successfully">Changes were saved successfully</string>
 	<string-array name="ui_mode_options">
 		<item>System</item>
 		<item>Light</item>
 		<item>Dark</item>
+	</string-array>
+	<string-array name="pic_sources">
+		<item>No change</item>
+		<item>URL</item>
+		<item>Initials</item>
+		<item>Gallery/Camera</item>
 	</string-array>
 </resources>

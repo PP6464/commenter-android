@@ -28,3 +28,14 @@ data class UserResponse(
 	val code : Int,
 	val payload : User? = null,
 )
+
+@Serializable
+data class ProfileUpdateBody(
+	val uid : String,
+	val displayName : String? = null,
+	val email : String? = null,
+	val password : String? = null,
+	val pic : String? = null,
+	val status: String? = null,
+	val hasPicFile : Boolean = false
+)
