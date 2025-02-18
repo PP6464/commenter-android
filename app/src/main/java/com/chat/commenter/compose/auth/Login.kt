@@ -1,6 +1,7 @@
 package com.chat.commenter.compose.auth
 
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -61,6 +64,7 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Login(
 	viewModel: AppViewModel = koinViewModel(),
@@ -82,6 +86,7 @@ fun Login(
 	val tsf = ui.tsf
 	val context = LocalContext.current
 	var loading by remember { mutableStateOf(false) }
+	val loadingBringIntoViewRequester = remember { BringIntoViewRequester() }
 	// Coroutines
 	val coroutineScope = rememberCoroutineScope()
 	// NavController
@@ -153,7 +158,7 @@ fun Login(
 			trailingIcon = if (showPassword) painterResource(R.drawable.ic_visibility) else painterResource(R.drawable.ic_visibility_off),
 			trailingIconOnPress = { showPassword = !showPassword },
 			keyboardOptions = KeyboardOptions(
-				keyboardType = KeyboardType.Email,
+				keyboardType = KeyboardType.Password,
 			),
 		)
 		Spacer(modifier = Modifier.height((passwordError?.let { 0 } ?: 8).dp))
@@ -161,6 +166,7 @@ fun Login(
 			onClick = {
 				coroutineScope.launch {
 					loading = true
+					loadingBringIntoViewRequester.bringIntoView()
 					val res = httpClient!!
 						.requestFromAPI("login", HttpMethod.Post, LoginBody(email, password))
 					when (res.status) {
@@ -224,6 +230,13 @@ fun Login(
 				}
 		)
 		Spacer(modifier = Modifier.height(8.dp))
-		if (loading) CircularProgressIndicator(color = MaterialTheme.colorScheme.secondary)
+		if (loading) {
+			CircularProgressIndicator(
+				color = MaterialTheme.colorScheme.secondary,
+				modifier = Modifier
+					.bringIntoViewRequester(loadingBringIntoViewRequester)
+					.padding(bottom = 16.dp)
+			)
+		}
 	}
 }

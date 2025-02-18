@@ -1,6 +1,7 @@
 package com.chat.commenter.compose.auth
 
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -62,6 +65,7 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SignUp(
 	viewModel: AppViewModel = koinViewModel(),
@@ -87,6 +91,7 @@ fun SignUp(
 	val ui by viewModel.uiState.collectAsState()
 	val tsf = ui.tsf
 	var loading by remember { mutableStateOf(false) }
+	val loadingBringIntoViewRequester = remember { BringIntoViewRequester() }
 	val context = LocalContext.current
 	// NavController
 	val navController = LocalNavController.current
@@ -181,6 +186,7 @@ fun SignUp(
 			onClick = {
 				coroutineScope.launch {
 					loading = true
+					loadingBringIntoViewRequester.bringIntoView()
 					val res = httpClient!!.requestFromAPI(
 						path = "sign-up",
 						method = HttpMethod.Post,
@@ -263,8 +269,13 @@ fun SignUp(
 				}
 		)
 		Spacer(modifier = Modifier.height(8.dp))
-		if (loading) CircularProgressIndicator(
-			color = MaterialTheme.colorScheme.secondary
-		)
+		if (loading) {
+			CircularProgressIndicator(
+				color = MaterialTheme.colorScheme.secondary,
+				modifier = Modifier
+					.bringIntoViewRequester(loadingBringIntoViewRequester)
+					.padding(bottom = 16.dp)
+			)
+		}
 	}
 }
