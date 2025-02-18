@@ -2,8 +2,7 @@ package com.chat.commenter.state
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import com.chat.commenter.api.createHttpClient
 import com.chat.commenter.schemas.User
@@ -70,10 +69,10 @@ class UIStateHolderImpl(private val context: Context) : UIStateHolder {
 	override fun saveState() {
 		val preferences = context.getSharedPreferences("ui", MODE_PRIVATE)
 		preferences
-			.edit()
-			.putString("uiMode", uiState.value.uiMode)
-			.putFloat("tsf", uiState.value.tsf)
-			.apply()
+			.edit {
+				putString("uiMode", uiState.value.uiMode)
+					.putFloat("tsf", uiState.value.tsf)
+			}
 	}
 }
 
