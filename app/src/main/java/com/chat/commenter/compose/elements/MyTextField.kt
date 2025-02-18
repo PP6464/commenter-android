@@ -54,32 +54,17 @@ fun MyTextField(
 	val tsf = ui.tsf
 	
 	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = Modifier
-			.fillMaxWidth()
+			.width(500.dp)
+			.padding(horizontal = 16.dp)
 	) {
 		OutlinedTextField(
 			value = value,
 			onValueChange = onValueChange,
-			leadingIcon = {
+			leadingIcon =
 				leadingIcon?.let {
-					Icon(
-						imageVector = it,
-						contentDescription = null,
-						tint =
-							if (error != null)
-								MaterialTheme.colorScheme.error
-							else if (hasFocus)
-								MaterialTheme.colorScheme.secondary
-							else
-								Color.Gray,
-					)
-				}
-			},
-			trailingIcon = {
-				trailingIcon?.let {
-					IconButton(
-						onClick = trailingIconOnPress,
-					) {
+					{
 						Icon(
 							imageVector = it,
 							contentDescription = null,
@@ -92,8 +77,27 @@ fun MyTextField(
 									Color.Gray,
 						)
 					}
-				}
-			},
+				},
+			trailingIcon =
+				trailingIcon?.let {
+					{
+						IconButton(
+							onClick = trailingIconOnPress,
+						) {
+							Icon(
+								imageVector = it,
+								contentDescription = null,
+								tint =
+									if (error != null)
+										MaterialTheme.colorScheme.error
+									else if (hasFocus)
+										MaterialTheme.colorScheme.secondary
+									else
+										Color.Gray,
+							)
+						}
+					}
+				},
 			isError = error != null,
 			singleLine = singleLine,
 			textStyle = TextStyle(
@@ -133,7 +137,6 @@ fun MyTextField(
 			),
 			modifier = Modifier
 				.width(500.dp)
-				.padding(horizontal = 16.dp)
 				.onFocusChanged(onFocusChanged)
 		)
 		charLimit?.let { c ->
@@ -142,11 +145,7 @@ fun MyTextField(
 					horizontalArrangement = Arrangement.SpaceBetween,
 					modifier = Modifier
 						.fillMaxWidth()
-						.padding(
-							top = 5.dp,
-							start = 16.dp,
-							end = 16.dp,
-						)
+						.padding(top = 5.dp)
 				) {
 					Text(
 						text = it,
@@ -173,11 +172,7 @@ fun MyTextField(
 				),
 				modifier = Modifier
 					.align(Alignment.End)
-					.padding(
-						top = 5.dp,
-						start = 16.dp,
-						end = 16.dp,
-					)
+					.padding(top = 5.dp)
 			)
 		} ?: error?.let {
 			Text(
@@ -191,8 +186,6 @@ fun MyTextField(
 					.fillMaxWidth()
 					.padding(
 						top = 5.dp,
-						start = 16.dp,
-						end = 16.dp,
 						bottom = 0.dp,
 					)
 					.align(Alignment.Start)
@@ -208,8 +201,6 @@ fun MyTextField(
 					.fillMaxWidth()
 					.padding(
 						top = 5.dp,
-						start = 16.dp,
-						end = 16.dp,
 						bottom = 0.dp,
 					)
 					.align(Alignment.Start)
@@ -240,27 +231,30 @@ fun MyTextField(
 	val tsf = ui.tsf
 	
 	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = Modifier
-			.fillMaxWidth()
+			.width(500.dp)
+			.padding(horizontal = 16.dp)
 	) {
 		OutlinedTextField(
 			value = value,
 			onValueChange = onValueChange,
-			leadingIcon = {
+			leadingIcon =
 				leadingIcon?.let {
-					Icon(
-						imageVector = it,
-						contentDescription = null,
-						tint =
-							if (error != null)
-								MaterialTheme.colorScheme.error
-							else if (hasFocus)
-								MaterialTheme.colorScheme.secondary
-							else
-								Color.Gray,
-					)
-				}
-			},
+					{
+						Icon(
+							imageVector = it,
+							contentDescription = null,
+							tint =
+								if (error != null)
+									MaterialTheme.colorScheme.error
+								else if (hasFocus)
+									MaterialTheme.colorScheme.secondary
+								else
+									Color.Gray,
+						)
+					}
+				},
 			trailingIcon = {
 				IconButton(
 					onClick = trailingIconOnPress,
@@ -268,13 +262,6 @@ fun MyTextField(
 					Icon(
 						painter = trailingIcon,
 						contentDescription = null,
-						tint =
-							if (error != null)
-								MaterialTheme.colorScheme.error
-							else if (hasFocus)
-								MaterialTheme.colorScheme.secondary
-							else
-								Color.Gray,
 					)
 				}
 			},
@@ -317,7 +304,6 @@ fun MyTextField(
 			),
 			modifier = Modifier
 				.width(500.dp)
-				.padding(horizontal = 16.dp)
 				.onFocusChanged(onFocusChanged)
 		)
 		charLimit?.let { c ->
@@ -326,11 +312,7 @@ fun MyTextField(
 					horizontalArrangement = Arrangement.SpaceBetween,
 					modifier = Modifier
 						.fillMaxWidth()
-						.padding(
-							top = 5.dp,
-							start = 16.dp,
-							end = 16.dp,
-						)
+						.padding(top = 5.dp)
 				) {
 					Text(
 						text = it,
@@ -357,11 +339,7 @@ fun MyTextField(
 				),
 				modifier = Modifier
 					.align(Alignment.End)
-					.padding(
-						top = 5.dp,
-						start = 16.dp,
-						end = 16.dp,
-					)
+					.padding(top = 5.dp)
 			)
 		} ?: error?.let {
 			Text(
@@ -375,8 +353,6 @@ fun MyTextField(
 					.fillMaxWidth()
 					.padding(
 						top = 5.dp,
-						start = 16.dp,
-						end = 16.dp,
 						bottom = 0.dp,
 					)
 					.align(Alignment.Start)
@@ -392,8 +368,6 @@ fun MyTextField(
 					.fillMaxWidth()
 					.padding(
 						top = 5.dp,
-						start = 16.dp,
-						end = 16.dp,
 						bottom = 0.dp,
 					)
 					.align(Alignment.Start)
