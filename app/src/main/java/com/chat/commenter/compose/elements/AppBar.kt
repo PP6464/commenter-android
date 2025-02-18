@@ -38,7 +38,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(
-	pageToHide: Page? = null,
+	currentPage: Page? = null,
 	viewModel: AppViewModel = koinViewModel(),
 ) {
 	val ui by viewModel.uiState.collectAsState()
@@ -70,7 +70,22 @@ fun AppBar(
 				expanded = expanded,
 				onDismissRequest = { expanded = !expanded }
 			) {
-				Page.entries.filter { it !in setOf(Page.Auth, pageToHide) }.map {
+				currentPage?.let {
+					DropdownMenuItem(
+						text = {
+							Text(
+								stringResource(it.nameId),
+								fontSize = 18.sp * tsf,
+								fontWeight = FontWeight.Bold,
+								fontFamily = montserrat,
+							)
+						},
+						onClick = {
+							expanded = false
+						}
+					)
+				}
+				Page.entries.filter { it !in setOf(Page.Auth, currentPage) }.map {
 					DropdownMenuItem(
 						text = {
 							Text(
@@ -84,28 +99,26 @@ fun AppBar(
 						},
 					)
 				}
-				listOf(
-					DropdownMenuItem(
-						text = {
-							Text(
-								stringResource(id = R.string.logout),
-								fontSize = Typography.bodyLarge.fontSize * tsf,
-								fontFamily = montserrat,
-								color = MaterialTheme.colorScheme.error,
-							)
-						},
-						onClick = {
-							coroutineScope.launch {
-								httpClient!!.requestFromAPI("logout", HttpMethod.Post)
-								println("CHECK COOKIES ARE EMPTY")
-								println(httpClient!!.cookies(apiUrl))
-								navController.navigate(Page.Auth.route) {
-									popUpTo(navController.currentDestination!!.route!!) { inclusive = true }
-								}
-								viewModel.logout()
+				DropdownMenuItem(
+					text = {
+						Text(
+							stringResource(id = R.string.logout),
+							fontSize = Typography.bodyLarge.fontSize * tsf,
+							fontFamily = montserrat,
+							color = MaterialTheme.colorScheme.error,
+						)
+					},
+					onClick = {
+						coroutineScope.launch {
+							httpClient!!.requestFromAPI("logout", HttpMethod.Post)
+							println("CHECK COOKIES ARE EMPTY")
+							println(httpClient!!.cookies(apiUrl))
+							navController.navigate(Page.Auth.route) {
+								popUpTo(navController.currentDestination!!.route!!) { inclusive = true }
 							}
-						},
-					)
+							viewModel.logout()
+						}
+					},
 				)
 			}
 		},

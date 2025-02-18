@@ -44,7 +44,7 @@ fun Settings(
 	Scaffold(
 		topBar = {
 			AppBar(
-				pageToHide = Page.Settings,
+				currentPage = Page.Settings,
 			)
 		},
 		modifier = Modifier
