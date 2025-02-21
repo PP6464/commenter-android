@@ -76,6 +76,8 @@ import com.chat.commenter.permissions.rememberPermissionRequester
 import com.chat.commenter.state.AppViewModel
 import com.chat.commenter.ui.theme.Typography
 import com.chat.commenter.ui.theme.montserrat
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
@@ -99,8 +101,7 @@ import java.util.Locale
  * 0: No Change
  * 1: URL
  * 2: Initials
- * 3: Gallery
- * 4: Camera
+ * 3: Gallery/Camera (Picture)
  */
 sealed class ProfilePicSources(val nameIndex: Int, val type: String, open val source: String) {
 	data class NoChange(override val source: String) : ProfilePicSources(0, "url", source)
@@ -153,6 +154,10 @@ fun Profile(
 	var openImagePicker by remember { mutableStateOf(false) }
 	var imageBitmap: ImageBitmap? by remember { mutableStateOf(null) }
 	val imageCropper = rememberImageCropper()
+	// Colour picker
+	val colourPickerController = rememberColorPickerController()
+	var pickingColour by remember { mutableStateOf(false) }
+	var colourPicked by remember { mutableStateOf("") }
 	// Permissions
 	val requestCameraPermission = rememberPermissionRequester(permission = Manifest.permission.CAMERA)
 	
@@ -185,6 +190,71 @@ fun Profile(
 						picSource = ProfilePicSources.Picture(it.toString())
 					}
 				)
+				if (pickingColour) {
+					AlertDialog(
+						onDismissRequest = { pickingColour = false },
+						text = {
+							Column(
+								horizontalAlignment = Alignment.Start,
+							) {
+								Text(
+									text = stringResource(R.string.pick_colour_title),
+									style = TextStyle(
+										fontWeight = FontWeight.Bold,
+										fontSize = Typography.bodyLarge.fontSize * tsf * 1.5,
+										fontFamily = montserrat,
+									),
+								)
+								Text(
+									text = stringResource(R.string.pick_colour_initials),
+									style = TextStyle(
+										fontFamily = montserrat,
+										fontSize = Typography.bodyLarge.fontSize * tsf,
+									)
+								)
+								HsvColorPicker(
+									controller = colourPickerController,
+									onColorChanged = {
+										colourPicked = it.hexCode
+									},
+									modifier = Modifier
+										.size(200.dp)
+										.padding(16.dp)
+										.align(Alignment.CenterHorizontally)
+								)
+							}
+						},
+						dismissButton = {
+							TextButton(
+								onClick = {
+									pickingColour = false
+								}
+							) {
+								Text(
+									text = stringResource(R.string.cancel),
+									color = MaterialTheme.colorScheme.error,
+									fontFamily = montserrat,
+									fontSize = Typography.bodyLarge.fontSize * tsf,
+								)
+							}
+						},
+						confirmButton = {
+							TextButton(
+								onClick = {
+									picSource = ProfilePicSources.Initials("https://eu.ui-avatars.com/api/?name=${displayName.encodeURLPathPart()}&size=128&rounded=true&background=${colourPicked.drop(2)}")
+									pickingColour = false
+								}
+							) {
+								Text(
+									text = stringResource(R.string.confirm),
+									color = MaterialTheme.colorScheme.tertiary,
+									fontFamily = montserrat,
+									fontSize = Typography.bodyLarge.fontSize * tsf,
+								)
+							}
+						},
+					)
+				}
 				if (urlPopupShowing) {
 					AlertDialog(
 						onDismissRequest = { urlPopupShowing = false },
@@ -298,8 +368,7 @@ fun Profile(
 										}
 										
 										2 -> {
-											picSource =
-												ProfilePicSources.Initials("https://eu.ui-avatars.com/api/?name=${displayName.encodeURLPathPart()}&size=128&rounded=true&background=random")
+											pickingColour = true
 										}
 										
 										3 -> {

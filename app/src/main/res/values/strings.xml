@@ -43,6 +43,8 @@
 	<string name="save_changes_again">Please try saving changes again</string>
 	<string name="expired_session">Session expired. Please login again</string>
 	<string name="saved_changes_successfully">Changes were saved successfully</string>
+	<string name="pick_colour_title">Pick a colour</string>
+	<string name="pick_colour_initials">This will be the background of the initials picture</string>
 	<string-array name="ui_mode_options">
 		<item>System</item>
 		<item>Light</item>
